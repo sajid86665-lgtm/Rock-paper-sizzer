@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        .game-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #444;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .game-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .game-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .game-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .game-buttons button:focus {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+        }
+
+        .scoreboard {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #resultMessage {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reset-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .reset-button:hover {
+            background-color: #c82333;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .win-message {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .user-guide {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .toggle-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .toggle-button:hover {
+            background-color: #218838;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .intro-text {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-container, .user-guide {
+                padding: 20px;
+            }
+            
+            .game-buttons button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Rock Paper Scissors Game</h1>
+        
+        <p class="intro-text">
+            In the classic Rock, Paper, Scissors game, you'll compete against the computer. 
+            It's a simple yet thrilling battle of wits where your quick decisions determine your fate. 
+            Choose wisely between rock, paper, or scissors to engage in this timeless contest of strategy and chance!
+        </p>
+
+        <div id="gameContainer">
+            <p style="text-align: center; font-size: 18px; font-weight: bold;">Choose your move:</p>
+            
+            <div class="game-buttons">
+                <button id="rockButton" aria-label="Rock">馃 Rock</button>
+                <button id="paperButton" aria-label="Paper">馃搫 Paper</button>
+                <button id="scissorsButton" aria-label="Scissors">鉁傦笍 Scissors</button>
+            </div>
+
+            <div class="scoreboard">
+                <h2>Scoreboard</h2>
+                <div class="score">You: <span id="userScore">0</span></div>
+                <div class="score">Computer: <span id="computerScore">0</span></div>
+            </div>
+
+            <div id="resultMessage" aria-live="assertive"></div>
+
+            <button id="resetButton" class="reset-button" aria-label="Reset Game">馃攧 Reset Game</button>
+        </div>
+
+        <div id="winMessage" class="win-message hidden">
+            <p id="winMessageParagraph" aria-live="polite"></p>
+            <button id="playAgainButton" class="toggle-button" aria-label="Play Again">馃幃 Play Again</button>
+        </div>
+    </div>
+
+    <button id="userGuide" class="toggle-button" aria-expanded="false" aria-live="polite" onclick="toggleUserGuide()">
+        馃摉 Show User Guide to play this game
+    </button>
+
+    <div id="userGuideMsg" class="user-guide hidden">
+        <h2>Rock, Paper, Scissors Game User Guide</h2>
+        
+        <h3>Introduction:</h3>
+        <p>Welcome to the Rock, Paper, Scissors game! This accessible game allows you to compete against the computer and test your luck and strategy. The goal is to reach a score of 10 points before the computer does.</p>
+        
+        <h3>Game Elements:</h3>
+        <ul>
+            <li>
+                <h4>Buttons:</h4>
+                <p>There are three buttons representing your possible moves: Rock, Paper, and Scissors. These buttons are labeled appropriately for screen readers.</p>
+            </li>
+            <li>
+                <h4>Scoreboard:</h4>
+                <p>The scoreboard displays your score and the computer's score. The first player to reach 10 points wins.</p>
+            </li>
+            <li>
+                <h4>Reset Game Button:</h4>
+                <p>This button allows you to reset the game at any time.</p>
+            </li>
+            <li>
+                <h4>Result Message:</h4>
+                <p>Just above the reset game button, there is a Result Message. This area provides feedback on the outcome of each round, such as who won or if it's a tie.</p>
+            </li>
+        </ul>
+        
+        <h3>How to Play:</h3>
+        <ol>
+            <li>Use your screen reader to navigate to the game elements.</li>
+            <li>Choose your move by selecting one of the buttons labeled Rock, Paper, or Scissors.</li>
+            <li>After you make your choice, the computer will randomly select its move.</li>
+            <li>The result of the round will be announced by the screen reader, and the scores will be updated. To earn a point, consider the following rules:
+                <ul>
+                    <li>If you choose Rock and the computer chooses Scissors, you win the round.</li>
+                    <li>If you choose Paper and the computer chooses Rock, you win the round.</li>
+                    <li>If you choose Scissors and the computer chooses Paper, you win the round.</li>
+                    <li>If both you and the computer choose the same thing, then that will be a tie, and no points will be given to both.</li>
+                </ul>
+            </li>
+            <li>Continue playing until one player reaches a score of 10.</li>
+        </ol>
+        
+        <h3>Winning the Game:</h3>
+        <ul>
+            <li>If you reach a score of 10 before the computer, you will win! and you will hear a message for your victory.</li>
+            <li>If the computer reaches 10 points first, it wins, and you'll hear a message about the computer's victory.</li>
+            <li>
+                <h4>Play Again Button:</h4>
+                <p>After a game is finished, this button appears to start a new game.</p>
+            </li>
+        </ul>
+        
+        <h3>Resetting the Game:</h3>
+        <ul>
+            <li>If you want to start a new game or reset the current one, simply press the Reset Game button. You'll hear a sound to confirm the reset.</li>
+        </ul>
+        
+        <h3>User Guide Toggle:</h3>
+        <ul>
+            <li>There is a "Show User Guide to play this game" button you can use to toggle the visibility of this guide.</li>
+        </ul>
+        
+        <p>Enjoy playing Rock, Paper, Scissors! Have fun testing your luck and strategy against the computer.</p>
+        
+        <button onclick="document.getElementById('userGuide').focus()" class="toggle-button">猬嗭笍 Move to top of the user guide</button>
+    </div>
+
+    <script type="text/javascript">
+        const gameContainer = document.getElementById('gameContainer');
+        const userScoreDisplay = document.getElementById('userScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        const resultMessage = document.getElementById('resultMessage');
+        const resetButton = document.getElementById('resetButton');
+        const winMessage = document.getElementById('winMessage');
+        const playAgainButton = document.getElementById('playAgainButton');
+        
+        // Sound effects
+        const winSound = new Audio('https://www.techassistantforblind.com/wp-content/uploads/2023/04/Correct_Answer_Sound_Effect_ZvlvhIpcflA_140.mp3');
+        const loseSound = new Audio('https://www.techassistantforblind.com/wp-content/uploads/2023/04/Error_Sound_Effects_No_Copyright__FwVRkhy5G04_140.mp3');
+        const resetSound = new Audio('https://www.techassistantforblind.com/wp-content/uploads/2023/09/transition-sound.mp3');
+        
+        // New sound effects for game completion and launch
+        const gameStartSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+        const userVictorySound = new Audio('https://www.techassistantforblind.com/wp-content/uploads/2023/04/Correct_Answer_Sound_Effect_ZvlvhIpcflA_140.mp3');
+        const computerVictorySound = new Audio('https://www.techassistantforblind.com/wp-content/uploads/2023/04/Error_Sound_Effects_No_Copyright__FwVRkhy5G04_140.mp3');
+
+        winSound.preload = 'auto';
+        loseSound.preload = 'auto';
+        resetSound.preload = 'auto';
+        gameStartSound.preload = 'auto';
+        userVictorySound.preload = 'auto';
+        computerVictorySound.preload = 'auto';
+
+        let userScore = 0;
+        let computerScore = 0;
+        let gameStarted = false; // Track if the game has started
+
+        function resetGame() {
+            userScore = 0;
+            computerScore = 0;
+            gameStarted = false; // Reset the game started flag
+            userScoreDisplay.textContent = userScore;
+            computerScoreDisplay.textContent = computerScore;
+            resultMessage.textContent = "Game reset! Choose your move to start playing.";
+            // Show the game container and hide the win message
+            gameContainer.classList.remove('hidden');
+            winMessage.classList.add('hidden');
+        }
+
+        function playRound(userSelection) {
+            // Play game start sound on first move
+            if (!gameStarted) {
+                gameStarted = true;
+                gameStartSound.play().catch(e => console.log('Game start audio play failed:', e));
+            }
+            
+            if (userScore < 10 && computerScore < 10) {
+                const moves = ["rock", "paper", "scissors"];
+                const computerSelection = moves[Math.floor(Math.random() * moves.length)];
+
+                if (userSelection === computerSelection) {
+                    resultMessage.textContent = `It's a tie! You both chose ${userSelection}.`;
+                } else if (
+                    (userSelection === "rock" && computerSelection === "scissors") ||
+                    (userSelection === "paper" && computerSelection === "rock") ||
+                    (userSelection === "scissors" && computerSelection === "paper")
+                ) {
+                    userScore++;
+                    resultMessage.textContent = `You win! You chose ${userSelection}, computer chose ${computerSelection}.`;
+                    // Play the win sound
+                    winSound.play().catch(e => console.log('Audio play failed:', e));
+                } else {
+                    computerScore++;
+                    resultMessage.textContent = `Computer wins! You chose ${userSelection}, computer chose ${computerSelection}.`;
+                    // Play the lose sound
+                    loseSound.play().catch(e => console.log('Audio play failed:', e));
+                }
+
+                userScoreDisplay.textContent = userScore;
+                computerScoreDisplay.textContent = computerScore;
+
+                if (userScore === 10) {
+                    // Hide the game container and display the win message
+                    gameContainer.classList.add('hidden');
+                    winMessage.classList.remove('hidden');
+                    document.getElementById("winMessageParagraph").innerHTML = "馃帀 Congratulations! You've won the game! 馃帀";
+                    // Play user victory sound
+                    setTimeout(() => {
+                        userVictorySound.play().catch(e => console.log('User victory audio play failed:', e));
+                    }, 500);
+                } else if (computerScore === 10) {
+                    // Hide the game container and display the win message
+                    gameContainer.classList.add('hidden');
+                    winMessage.classList.remove('hidden');
+                    document.getElementById("winMessageParagraph").innerHTML = "馃様 You lose the game! Computer has won this game. Better luck next time!";
+                    // Play computer victory sound
+                    setTimeout(() => {
+                        computerVictorySound.play().catch(e => console.log('Computer victory audio play failed:', e));
+                    }, 500);
+                } else {
+                    resultMessage.textContent += ` Current score - You: ${userScore}, Computer: ${computerScore}`;
+                }
+            }
+        }
+
+        // User Guide Toggle Function
+        function toggleUserGuide() {
+            const userGuideMsg = document.getElementById('userGuideMsg');
+            const userGuideButton = document.getElementById('userGuide');
+            const isHidden = userGuideMsg.classList.contains('hidden');
+            
+            if (isHidden) {
+                userGuideMsg.classList.remove('hidden');
+                userGuideButton.setAttribute('aria-expanded', 'true');
+                userGuideButton.textContent = '馃摉 Hide user guide';
+            } else {
+                userGuideMsg.classList.add('hidden');
+                userGuideButton.setAttribute('aria-expanded', 'false');
+                userGuideButton.textContent = '馃摉 Show User Guide to play this game';
+            }
+        }
+
+        // Event listeners for user's choices
+        document.getElementById('rockButton').addEventListener('click', () => {
+            playRound('rock');
+        });
+
+        document.getElementById('paperButton').addEventListener('click', () => {
+            playRound('paper');
+        });
+
+        document.getElementById('scissorsButton').addEventListener('click', () => {
+            playRound('scissors');
+        });
+
+        // Event listener for the reset button
+        resetButton.addEventListener('click', () => {
+            resetGame();
+            resetSound.play().catch(e => console.log('Audio play failed:', e));
+        });
+
+        playAgainButton.addEventListener('click', () => {
+            resetGame();
+            resetSound.play().catch(e => console.log('Audio play failed:', e));
+        });
+
+        // Initialize the game
+        resultMessage.textContent = "Welcome! Choose your move to start playing.";
+    </script>
+</body>
+</html>
